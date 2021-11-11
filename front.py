@@ -21,6 +21,7 @@ import urllib3
 urllib.request
 import http
 
+#some variables to use later 
 divider = "\n_____________________________________\n"
 exit = "/exit"
 help = "/help"
@@ -31,16 +32,19 @@ purchase = "/purchase"
 app = Flask(_name_)
 api = Api(app)
 
+#getting the book by its ID
 @app.route('/info/<id>', methods=['GET'])
 def getBookById(id):
-    print("Book By ID")
+  #using get method to get the book information by id 
     r = requests.get('http://192.168.10.112:5000/books/{}'.format(id))
   
+  #checking the response status
     if r.status_code == 404:
         return "invalid book number" 
 
     if r.status_code == 200:
         response = r.json()
+        #print the values if the response is okay
         res = divider
         res +=  "id      : "+str(response["id"]) + "\n" 
         res +=  "title   : "+response["title"] + "\n" 
@@ -51,6 +55,7 @@ def getBookById(id):
 
     else : return "ERROR try again later"
 
+#getting the books by searching by a topic
 @app.route('/search/<topic>', methods=['GET'])
 def getBooksByTopic(topic):
     print("Book By topic")
@@ -73,6 +78,7 @@ def getBooksByTopic(topic):
 def updateBookQuantity(id):
     print("Book Quantity")
 
+#here we send with the request a json file with the id , for the orders to know which book to choose
     r = requests.post('http://192.168.10.111:5000/orders',
                          json={"id":int(id)})
     if r.status_code == 404:
@@ -85,12 +91,14 @@ def updateBookQuantity(id):
     else : return "ERROR try again later"
         
 
+#command info
 print("\n Welcome to Bazar.com ")
 print("\n/help => for Command list ")
 print("/exit => to exit \n")
 
 Userinput = ""
 while (True) :
+    #getting user command
     Userinput = input("> ")
     command = Userinput.split(" ",1)
     if Userinput == exit :
@@ -100,6 +108,8 @@ while (True) :
         print(" /info (item_id)\n")
         print(" /purchase (item_id)\n")
         
+        #checking if the length of the command < 2 , so the program will refuse the command if it less than 2
+        #becase the 3 commands are 2 parts 
     elif len(command) < 2 :
         print("  invalid command")
         
