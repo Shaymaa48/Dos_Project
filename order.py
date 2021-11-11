@@ -14,13 +14,16 @@ from datetime import datetime
 app = Flask(_name_)
 api = Api(app)
 
-
+#posting the books by ordering
 @app.route('/orders', methods=['POST'])
 def addNewOrder():
     body = request.get_json()
     id = body["id"]
   
+    #using get method to get the book information by id 
     r = requests.get('http://192.168.10.112:5000/books/{}'.format(id))
+
+    #checking the response status
     if r.status_code == 404:
         return abort(404, description="no books found") 
 
@@ -32,6 +35,8 @@ def addNewOrder():
 
     newQuantity = quantity - 1
     response["quantity"] = newQuantity
+
+    #here we update the information of books in catalog with the request a json file with the id.
     r2 = requests.put('http://192.168.10.112:5000/books/{}'.format(str(id)), json=(response))
     if r.status_code == 403: return abort(403, description="failed") 
 
