@@ -12,13 +12,15 @@ import json
 app = Flask(_name_)
 api = Api(app)
 
- 
+ #see if the book id is exist in the db which is here the json file
 @app.route('/books/<id>', methods=['GET'])
 def getBookById(id):
 
+    #openning the json 
     f = open('books.json',) 
     data = json.load(f) 
 
+    #search for the data with the same required Id
     for book in data['books']: 
         if book['id'] == int(id) :
             return jsonify(book)
@@ -30,28 +32,28 @@ def getBooksByTopic():
     topic = request.args.get('topic')
     f = open('books.json',) 
     data = json.load(f) 
-    booksList = []
+    bList = [] #if the book topic matchs the required on it will be stored in a list 
     for book in data['books']: 
         if book['topic'] == topic :
-            bookDict = {
+            bookinfo = {
             'id': book['id'],
             'title': book['title']}
-            booksList.append(bookDict)
+            bList.append(bookinfo)
             
     f.close()
 
     if len(booksList) == 0 :
         abort(404)
 
-    return jsonify(booksList)
+    return jsonify(bsList)
 
 @app.route('/books/<id>', methods=['PUT'])
 def updateBookQuantity(id):
 
     body = request.json
-    newQuantity = body["quantity"]
+    newQuantity = body["quantity"] #take the newQuantity to write it on the book db (json file)
 
-    f = open('books.json','r+') 
+    f = open('books.json','r+')  
     data = json.load(f) 
     for book in data['books']: 
         if book['id'] == int(id) :
